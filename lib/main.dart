@@ -1,31 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:jwt_auth/home_page.dart';
-import 'package:jwt_auth/login_page.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:jwt_auth/infrastructure/provider/token_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:jwt_auth/presentation/component/indicator_component.dart';
+import 'package:jwt_auth/presentation/home_page.dart';
+import 'package:jwt_auth/presentation/login_page.dart';
 
-/// [StatefulWidget]を使う場合
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  // accessTokenを取得する
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  var token = prefs.getString('token');
-  runApp(MyApp(token: token));
+void main() {
+  runApp(const ProviderScope(child: MyApp()));
 }
 
-class MyApp extends StatelessWidget {
-  final String? token;// main()で取得したtokenを受け取る
-
-  const MyApp({Key? key, this.token}) : super(key: key);
+class MyApp extends ConsumerWidget {
+  const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final tokenAsyncValue = ref.watch(tokenProvider);
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+        primarySwatch: Colors.blue,
       ),
-      home: token == null ? const LoginPage() : const HomePage(),// tokenがあればHomePage、なければLoginPageを表示
+      home: tokenAsyncValue.when(
+        data: (token) => token == null ? const LoginPage() : const HomePage(),
+        loading: () => const IndicatorComponent(),
+        error: (e, stack) => Text('Error: $e'),
+      ),
     );
   }
 }
