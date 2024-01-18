@@ -16,9 +16,15 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final tokenAsyncValue = ref.watch(tokenProvider);
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        // AppBarのテーマ
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.black87,
+          centerTitle: true,
+        ),
       ),
       home: tokenAsyncValue.when(
         data: (token) => token == null ? const LoginPage() : const HomePage(),

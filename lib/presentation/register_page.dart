@@ -3,17 +3,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jwt_auth/core/logger.dart';
 import 'package:jwt_auth/infrastructure/jwt_client.dart';
 import 'package:jwt_auth/presentation/home_page.dart';
-import 'package:jwt_auth/presentation/register_page.dart';
 
-/// ログイン画面
-class LoginPage extends ConsumerStatefulWidget {
-  const LoginPage({super.key});
+/// 新規登録画面
+class RegisterPage extends ConsumerStatefulWidget {
+  const RegisterPage({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _LoginPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends ConsumerState<LoginPage> {
+class _RegisterPageState extends ConsumerState<RegisterPage> {
   // GlobalKey<FormState>();は、Formの状態を管理するためのキー
   final _formKey = GlobalKey<FormState>();
   final nameController = TextEditingController();
@@ -28,14 +27,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   }
 
   // ViewとJWT認証のロジックを切り分けてコードをできるだけ短くした。
-  Future<void> jwtLogin() async {
+  Future<void> register() async {
     if (_formKey.currentState!.validate()) {
       // JWT認証のロジックを持っているJwtRepositoryImplをプロバイダーから取得する
       final loginService = ref.read(jwtRepositoryImplProvider);
-      // JWT認証のロジックを持っているJwtRepositoryImplのjwtLoginメソッドを呼び出す
-      final result = await loginService.jwtLogin(
+      // JWT認証のロジックを持っているJwtRepositoryImplのjwtRegisterメソッドを呼び出す
+      final result = await loginService.jwtRegister(
           nameController.text, passwordController.text);
-      // ログイン成功時は、HomePageに遷移する
+      // 新規登録時に成功時は、HomePageに遷移する
       if (result == 'success') {
         if (mounted) {
           Navigator.of(context).pushAndRemoveUntil(
@@ -43,10 +42,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             (route) => false,
           );
         }
-        logger.d('Login Success🦁');
+        logger.d('新規登録🍅');
       } else {
         if (mounted) {
-          // ログイン失敗時は、エラーダイアログを表示する。error messageは、Go言語のサーバー側で設定している
+          // 新規登録🍅失敗時は、エラーダイアログを表示する。error messageは、Go言語のサーバー側で設定している
           showDialog(
             context: context,
             builder: (context) => AlertDialog(
@@ -124,18 +123,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.black,
                     ),
-                    onPressed: jwtLogin,
-                    child: const Text('ログイン'),
+                    onPressed: register,
+                    child: const Text('新規登録'),
                   ),
-                  TextButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                              builder: (context) => const RegisterPage()),
-                        );
-                      },
-                      child: const Text('新規登録',
-                          style: TextStyle(color: Colors.white))),
                 ],
               ),
             ),
