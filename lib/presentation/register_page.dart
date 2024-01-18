@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:jwt_auth/core/logger.dart';
+import 'package:jwt_auth/core/svg_path.dart';
 import 'package:jwt_auth/infrastructure/jwt_client.dart';
 import 'package:jwt_auth/presentation/home_page.dart';
 
@@ -82,51 +84,70 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
       ),
       child: Scaffold(
           backgroundColor: Colors.transparent,
-          appBar: AppBar(title: const Text('Login')),
+          appBar: AppBar(title: const Text('新規登録')),
           body: Padding(
             padding: const EdgeInsets.all(16.0),
             // Formは、入力フォームをグループ化するためのWidget。validatorで入力チェックを行う
             child: Form(
               key: _formKey, // key
-              child: Column(
-                children: [
-                  TextFormField(
-                    controller: nameController,
-                    decoration: const InputDecoration(
-                        fillColor: Colors.white,
-                        filled: true,
-                        labelText: 'Name'),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'ユーザー名が入力されていません';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: passwordController,
-                    decoration: const InputDecoration(
-                        fillColor: Colors.white,
-                        filled: true,
-                        labelText: 'Password'),
-                    obscureText: true,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'パスワードが入力されていません';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 16),
+                    SvgPicture.asset(
+                      width: 240,
+                      height: 240,
+                      svgPath,
                     ),
-                    onPressed: register,
-                    child: const Text('新規登録'),
-                  ),
-                ],
+                    const SizedBox(height: 24),
+                    SizedBox(
+                      width: 300,
+                      height: 50,
+                      child: TextFormField(
+                        controller: nameController,
+                        decoration: const InputDecoration(
+                            fillColor: Colors.white,
+                            filled: true,
+                            labelText: 'Name'),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'ユーザー名が入力されていません';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Container(),
+                    SizedBox(
+                      width: 300,
+                      height: 50,
+                      child: TextFormField(
+                        controller: passwordController,
+                        decoration: const InputDecoration(
+                            fillColor: Colors.white,
+                            filled: true,
+                            labelText: 'Password'),
+                        obscureText: true,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'パスワードが入力されていません';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                      ),
+                      onPressed: register,
+                      child: const Text('新規登録'),
+                    ),
+                  ],
+                ),
               ),
             ),
           )),
